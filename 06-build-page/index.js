@@ -24,22 +24,29 @@ function writeFile() {
 const arrFile = [];
 fs.readdir(`${__dirname}\\styles`, { withFileTypes: true }, (err, files) => {
     files.forEach(item => {
-        console.log(`${item.name.slice(0, item.name.indexOf('.'))}`)
         arrFile.push(`${item.name.slice(0, item.name.indexOf('.'))}`)
     })
 })
+
+const arrFileHTML = [];
+fs.readdir(`${__dirname}\\components`, { withFileTypes: true }, (err, files) => {
+    files.forEach(item => {
+        arrFileHTML.push(`${item.name.slice(0, item.name.indexOf('.'))}`)
+    })
+})
+
 
 
 let countHtml = 0;
 let countCss = 0;
 
 function writeHtml() {
-    if (countHtml < arrFile.length) {
-        fs.readFile(path.join(__dirname, 'components', `${arrFile[countHtml]}.html`), (err, data) => {
+    if (countHtml < arrFileHTML.length) {
+        fs.readFile(path.join(__dirname, 'components', `${arrFileHTML[countHtml]}.html`), (err, data) => {
             let str = data.toString();
             fs.readFile(path.join(__dirname, 'project-dist', 'index.html'), (err, text) => {
                 let indexText = text.toString();
-                let newStr = indexText.replace(`{{${arrFile[countHtml]}}}`, str);
+                let newStr = indexText.replace(`{{${arrFileHTML[countHtml]}}}`, str);
                 fs.writeFile(path.join(__dirname, 'project-dist', 'index.html'), newStr, (err) => {
                     ++countHtml;
                     writeHtml()
@@ -87,4 +94,6 @@ function copyAssets() {
     })
 }
 
-createFile()
+fs.rm(path.join(__dirname, 'project-dist'), { recursive: true, force: true }, () => {
+    createFile();
+  });
